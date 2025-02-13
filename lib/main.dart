@@ -4,6 +4,7 @@ import 'package:simple_list_test/common/constant/constant.dart';
 import 'package:simple_list_test/data/repositories/app_repository_impl.dart';
 import 'package:simple_list_test/presentation/bloc/shared_bloc.dart';
 import 'package:simple_list_test/presentation/screen/first_screen.dart';
+import 'package:simple_list_test/presentation/screen/second_screen.dart';
 
 import 'common/route/route.dart';
 import 'domain/usecases/check_palindrome_usecase.dart';
@@ -39,6 +40,8 @@ class MyApp extends StatelessWidget {
             switch (settings.name) {
               case firstScreenRouteName:
                 return MaterialPageRoute(builder: (_) => FirstScreen());
+              case secondScreenRouteName:
+                return MaterialPageRoute(builder: (_) => SecondScreen());
               default:
                 return MaterialPageRoute(
                     builder: (_) => Scaffold(

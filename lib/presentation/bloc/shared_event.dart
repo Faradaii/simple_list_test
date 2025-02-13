@@ -11,3 +11,8 @@ class SharedPalindromeChangedEvent extends SharedEvent {
   final String textPalindrome;
   SharedPalindromeChangedEvent({required this.textPalindrome});
 }
+
+class SharedSelectedUserChangedEvent extends SharedEvent {
+  final String user;
+  SharedSelectedUserChangedEvent({required this.user});
+}
