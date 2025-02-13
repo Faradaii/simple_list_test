@@ -36,7 +36,6 @@ class SharedBloc extends Bloc<SharedEvent, SharedState> {
 
       result.fold(
           (fail) => emit(SharedLoaded().copyWith(message: fail.message, isFetchingUser: false)), (success) {
-        print(success.data.toString());
 
         final nextPage = success.data!.length < event.perPage
             ? null
