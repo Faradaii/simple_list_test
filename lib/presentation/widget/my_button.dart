@@ -17,11 +17,14 @@ class MyButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
           ),
         ),
-        child: Text(
-          text,
-          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color: Theme.of(context).colorScheme.onSurface,
-              fontWeight: FontWeight.w700),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4.0),
+          child: Text(
+            text,
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                color: Theme.of(context).colorScheme.onSurface,
+                fontWeight: FontWeight.w700),
+          ),
         ),
       ),
     );

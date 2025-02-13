@@ -1,45 +1,40 @@
 part of 'shared_bloc.dart';
 
-sealed class SharedState {
-  final String? name;
-  final String? textPalindrome;
-  final bool? isPalindrome;
-
-  const SharedState({
-    this.name,
-    this.textPalindrome,
-    this.isPalindrome,
-  });
-
-  SharedState copyWith({
-    String? name,
-    String? textPalindrome,
-    bool? isPalindrome,
-  }) {
-    if (this is SharedInitial) {
-      return SharedInitial();
-    } else if (this is SharedLoading) {
-      return SharedLoading();
-    } else if (this is SharedLoaded) {
-      return SharedLoaded();
-    } else {
-      return SharedLoaded(
-        name: name ?? this.name,
-        textPalindrome: textPalindrome ?? this.textPalindrome,
-        isPalindrome: isPalindrome ?? this.isPalindrome,
-      );
-    }
-  }
+sealed class SharedState extends Equatable {
+  @override
+  List<Object> get props => [];
 }
 
 final class SharedInitial extends SharedState {}
 
 final class SharedLoaded extends SharedState {
-  const SharedLoaded({
-    super.name,
-    super.textPalindrome,
-    super.isPalindrome,
+  final String name;
+  final String textPalindrome;
+  final bool isPalindrome;
+  final String selectedUser;
+
+  SharedLoaded({
+    this.name = "",
+    this.textPalindrome = "",
+    this.isPalindrome = false,
+    this.selectedUser = "",
   });
+
+  SharedLoaded copyWith({
+    String? name,
+    String? textPalindrome,
+    bool? isPalindrome,
+    String? selectedUser,
+  }) {
+    return SharedLoaded(
+        name: name ?? this.name,
+        textPalindrome: textPalindrome ?? this.textPalindrome,
+        isPalindrome: isPalindrome ?? this.isPalindrome,
+        selectedUser: selectedUser ?? this.selectedUser);
+  }
+
+  @override
+  List<Object> get props => [name, textPalindrome, isPalindrome, selectedUser];
 }
 
 final class SharedLoading extends SharedState {}

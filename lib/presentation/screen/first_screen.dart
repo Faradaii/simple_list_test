@@ -23,9 +23,13 @@ class _FirstScreenState extends State<FirstScreen> {
   @override
   void initState() {
     cteName = TextEditingController(
-        text: context.read<SharedBloc>().state.name ?? "");
+        text: (context.read<SharedBloc>().state is SharedLoaded
+            ? (context.read<SharedBloc>().state as SharedLoaded).name
+            : ""));
     cteTextPalindrome = TextEditingController(
-        text: context.read<SharedBloc>().state.textPalindrome ?? "");
+        text: (context.read<SharedBloc>().state is SharedLoaded
+            ? (context.read<SharedBloc>().state as SharedLoaded).textPalindrome
+            : ""));
     super.initState();
   }
 
@@ -39,17 +43,23 @@ class _FirstScreenState extends State<FirstScreen> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: SafeArea(
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 32),
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.max,
-                spacing: 40,
-                children: [
-                  _buildPhoto(),
-                  _buildInputField(),
-                  _buildBottomButton(),
-                ]),
+          child: Center(
+            child: SingleChildScrollView(
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 32),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  spacing: 40,
+                  children: [
+                    _buildPhoto(),
+                    _buildInputField(),
+                    _buildBottomButton(),
+                  ],
+                ),
+              ),
+            ),
           ),
         ),
       ),
@@ -96,33 +106,42 @@ class _FirstScreenState extends State<FirstScreen> {
       children: [
         BlocListener<SharedBloc, SharedState>(
           listener: (context, state) {
-            if (context.read<SharedBloc>().state is SharedLoaded &&
-                context.read<SharedBloc>().state.isPalindrome != null) {
+            if (state is SharedLoaded && state.textPalindrome.isNotEmpty) {
               showDialog(
-                  context: context,
-                  builder: (context) => _buildDialog(
-                      context.read<SharedBloc>().state.isPalindrome!));
+                context: context,
+                builder: (context) => _buildDialog(state.isPalindrome),
+              );
             }
           },
           child: MyButton(
-              text: "CHECK",
-              onPressed: () {
-                if (_formPalindrome.currentState!.validate()) {
-                  context.read<SharedBloc>().add(SharedPalindromeChangedEvent(
-                      textPalindrome: cteTextPalindrome!.text));
-                }
-              }),
+            text: "CHECK",
+            onPressed: () {
+              if (_formPalindrome.currentState!.validate()) {
+                context.read<SharedBloc>().add(
+                      SharedPalindromeChangedEvent(
+                          textPalindrome: cteTextPalindrome!.text),
+                    );
+              }
+            },
+          ),
         ),
-        MyButton(
+        BlocListener<SharedBloc, SharedState>(
+          listener: (context, state) {
+            if (state is SharedLoaded && state.name.isNotEmpty) {
+              Navigator.pushNamed(context, secondScreenRouteName);
+            }
+          },
+          child: MyButton(
             text: "NEXT",
             onPressed: () {
               if (_formName.currentState!.validate()) {
-                context
-                    .read<SharedBloc>()
-                    .add(SharedNameChangedEvent(name: cteName!.text));
-                Navigator.pushNamed(context, secondScreenRouteName);
+                context.read<SharedBloc>().add(
+                      SharedNameChangedEvent(name: cteName!.text),
+                    );
               }
-            }),
+            },
+          ),
+        ),
       ],
     );
   }
