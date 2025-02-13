@@ -11,7 +11,7 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       backgroundColor: Theme.of(context).colorScheme.onSurface,
       leading: IconButton(
-        onPressed: () => Navigator.pop(context),
+        onPressed: () => {Navigator.pop(context)},
         icon: Icon(
           Icons.arrow_back_ios_new_rounded,
           color: kPurple,
