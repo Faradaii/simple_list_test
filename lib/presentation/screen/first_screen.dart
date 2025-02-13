@@ -51,10 +51,15 @@ class _FirstScreenState extends State<FirstScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisSize: MainAxisSize.min,
-                  spacing: 40,
                   children: [
                     _buildPhoto(),
+                    SizedBox(
+                      height: 40,
+                    ),
                     _buildInputField(),
+                    SizedBox(
+                      height: 40,
+                    ),
                     _buildBottomButton(),
                   ],
                 ),
@@ -68,7 +73,6 @@ class _FirstScreenState extends State<FirstScreen> {
 
   Widget _buildInputField() {
     return Column(
-      spacing: 10,
       children: [
         Form(
           key: _formName,
@@ -82,6 +86,9 @@ class _FirstScreenState extends State<FirstScreen> {
               return null;
             },
           ),
+        ),
+        SizedBox(
+          height: 10,
         ),
         Form(
           key: _formPalindrome,
@@ -102,7 +109,6 @@ class _FirstScreenState extends State<FirstScreen> {
 
   Widget _buildBottomButton() {
     return Column(
-      spacing: 10,
       children: [
         BlocListener<SharedBloc, SharedState>(
           listener: (context, state) {
@@ -124,6 +130,9 @@ class _FirstScreenState extends State<FirstScreen> {
               }
             },
           ),
+        ),
+        SizedBox(
+          height: 10,
         ),
         BlocListener<SharedBloc, SharedState>(
           listener: (context, state) {
