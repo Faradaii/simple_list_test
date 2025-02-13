@@ -13,6 +13,7 @@ class ThirdScreen extends StatefulWidget {
 
 class _ThirdScreenState extends State<ThirdScreen> {
   final ScrollController scrollController = ScrollController();
+  int? page;
 
   @override
   void initState() {
@@ -20,12 +21,10 @@ class _ThirdScreenState extends State<ThirdScreen> {
     scrollController.addListener(() {
       if (scrollController.position.pixels >=
           scrollController.position.maxScrollExtent) {
-        final currentState = context.read<SharedBloc>().state;
-        if (currentState is SharedLoaded && currentState.page != null) {
-          _loadUsers();
-        }
+        _loadUsers();
       }
     });
+    page = 1;
   }
 
   @override
@@ -35,10 +34,12 @@ class _ThirdScreenState extends State<ThirdScreen> {
   }
 
   void _loadUsers({bool forceRefresh = false}) {
+    if (page != 0) {
       context
           .read<SharedBloc>()
           .add(SharedLoadUsersEvent(forceRefresh: forceRefresh));
-  }
+      }
+    }
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +51,14 @@ class _ThirdScreenState extends State<ThirdScreen> {
         },
       ),
       body: SafeArea(
-        child: BlocBuilder<SharedBloc, SharedState>(
+        child: BlocConsumer<SharedBloc, SharedState>(
+          listener: (context, state){
+            if (state is SharedLoaded) {
+              setState(() {
+                page = state.page;
+              });
+            }
+          },
           builder: (context, state) {
             return RefreshIndicator(
                 onRefresh: () async {
@@ -61,8 +69,8 @@ class _ThirdScreenState extends State<ThirdScreen> {
                         ? Center(child: Text(state.message, style: TextStyle(color: Colors.black)))
                         : (!state.isLoading)
                             ? _buildListUser(context, state.users)
-                            : Expanded(child: Center(child: CircularProgressIndicator(color: Colors.black,))))
-                    : Expanded(child: Center(child: CircularProgressIndicator(color: Colors.black))));
+                            : Center(child: CircularProgressIndicator(color: Colors.black,)))
+                    : Center(child: CircularProgressIndicator(color: Colors.black)));
           },
         ),
       ),

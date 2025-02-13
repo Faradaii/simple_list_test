@@ -107,7 +107,7 @@ class _SecondScreenState extends State<SecondScreen> {
         onPressed: () {
           context
               .read<SharedBloc>()
-              .add(SharedLoadUsersEvent());
+              .add(SharedLoadUsersEvent(forceRefresh: true));
           Navigator.pushNamed(context, thirdScreenRouteName);
         },
       ),

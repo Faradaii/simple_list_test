@@ -15,7 +15,7 @@ final class SharedLoaded extends SharedState {
   final String selectedUser;
   final List<UserEntity> users;
   final bool isLoading;
-  final int page;
+  final int? page;
 
   const SharedLoaded({
     this.name = "",
@@ -23,7 +23,7 @@ final class SharedLoaded extends SharedState {
     this.isPalindrome = false,
     this.selectedUser = "",
     this.users = const [],
-    this.page = 1,
+    this.page,
     this.isLoading = false,
     super.message,
   });
@@ -58,7 +58,8 @@ final class SharedLoaded extends SharedState {
         selectedUser,
         users,
         isLoading,
-        page,
         message
       ];
 }
+
+class SharedLoading extends SharedState {}

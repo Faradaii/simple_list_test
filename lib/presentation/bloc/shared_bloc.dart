@@ -35,22 +35,21 @@ class SharedBloc extends Bloc<SharedEvent, SharedState> {
     });
     on<SharedLoadUsersEvent>((event, emit) async {
       final prevState = state as SharedLoaded;
+
+      emit(SharedLoading());
       final resetPage = 1;
 
       final result = await fetchUsersUseCase.execute(
           event.forceRefresh ? resetPage : prevState.page, event.perPage);
-      print("After result : ${result.toString()}");
 
       result.fold(
-          (fail) => emit((state as SharedLoaded)
+          (fail) => emit((prevState)
               .copyWith(message: fail.message, isLoading: false)), (success) {
-        final nextPage =
-            success.data!.length < event.perPage ? null : prevState.page + 1;
 
         emit(
-          (state as SharedLoaded).copyWith(
-            users: [...prevState.users, ...?success.data],
-            page: nextPage,
+          (prevState).copyWith(
+            users: event.forceRefresh ? success.data : [...prevState.users, ...?success.data],
+            page: success.data!.length < event.perPage ? 0 : prevState.page ?? 1 + 1,
             message: "",
             isLoading: false,
           ),
