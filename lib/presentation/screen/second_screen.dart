@@ -16,7 +16,7 @@ class _SecondScreenState extends State<SecondScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MyAppBar(title: "Second Screen"),
+      appBar: MyAppBar(title: "Second Screen", onPressed: () {Navigator.pop(context);},),
       bottomNavigationBar: _buildBottomButton(),
       body: SafeArea(
         child: Padding(
@@ -99,7 +99,7 @@ class _SecondScreenState extends State<SecondScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       child: MyButton(
         text: "Choose a User",
-        onPressed: () {Navigator.pushNamed(context, thirdScreenRouteName);},
+        onPressed: () => Navigator.pushNamed(context, thirdScreenRouteName),
       ),
     );
   }

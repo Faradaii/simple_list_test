@@ -27,8 +27,13 @@ class _ThirdScreenState extends State<ThirdScreen> {
           _loadUsers();
         }
       }
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _loadUsers();
+        }
+      });
     });
-    _loadUsers();
   }
 
   @override
@@ -37,20 +42,18 @@ class _ThirdScreenState extends State<ThirdScreen> {
     scrollController.dispose();
   }
 
-  void _loadUsers({bool forceRefresh = false}) {
-    try {
+  void _loadUsers({bool forceRefresh = false}) async {
+    if (context.mounted) {
       context
-          .read<SharedBloc>()
-          .add(SharedLoadUsersEvent(forceRefresh: forceRefresh));
-    } catch (e) {
-      debugPrint("Error loading users: $e");
+        .read<SharedBloc>()
+        .add(SharedLoadUsersEvent(forceRefresh: forceRefresh));
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MyAppBar(title: "Third Screen"),
+      appBar: MyAppBar(title: "Third Screen", onPressed: () {Navigator.pop(context);},),
       body: SafeArea(
         child: BlocBuilder<SharedBloc, SharedState>(
           builder: (context, state) {
@@ -61,7 +64,7 @@ class _ThirdScreenState extends State<ThirdScreen> {
                 child: (state is SharedLoaded) ?
                 ((state.message != "") ?
                     Center(child: Text(state.message))
-                    : (!state.isFetchingUser) ?
+                    : (!state.isLoading) ?
                       _buildListUser(context, state.users)
                       :
                         Center(child: CircularProgressIndicator())) : Center(child: CircularProgressIndicator())

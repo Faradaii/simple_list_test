@@ -10,6 +10,7 @@ import 'presentation/screen/second_screen.dart';
 import 'presentation/screen/third_screen.dart';
 
 void main() async {
+  Bloc.observer = MyObserver();
   await inject();
   runApp(
     BlocProvider(
@@ -34,6 +35,7 @@ class MyApp extends StatelessWidget {
             textTheme: kTextTheme,
           ),
           home: FirstScreen(),
+          navigatorObservers: [RouteObserver<ModalRoute>()],
           onGenerateRoute: (RouteSettings settings) {
             switch (settings.name) {
               case firstScreenRouteName:
@@ -53,5 +55,25 @@ class MyApp extends StatelessWidget {
         );
       },
     );
+  }
+}
+
+class MyObserver extends BlocObserver {
+  @override
+  void onChange(BlocBase bloc, Change change) {
+    super.onChange(bloc, change);
+    debugPrint('bloc change ${bloc.runtimeType} ${bloc.state.toString()}');
+  }
+
+  @override
+  void onTransition(Bloc bloc, Transition transition) {
+    super.onTransition(bloc, transition);
+    debugPrint('bloc transition ${bloc.runtimeType}');
+  }
+
+  @override
+  void onError(BlocBase bloc, Object error, StackTrace stackTrace) {
+    super.onError(bloc, error, stackTrace);
+    debugPrint('bloc error ${bloc.runtimeType}');
   }
 }
