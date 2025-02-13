@@ -16,6 +16,7 @@ final class SharedLoaded extends SharedState {
   final bool isPalindrome;
   final String selectedUser;
   final List<UserEntity> users;
+  final bool isFetchingUser;
   final int? page;
 
   const SharedLoaded({
@@ -25,6 +26,7 @@ final class SharedLoaded extends SharedState {
     this.selectedUser = "",
     this.users = const [],
     this.page = 1,
+    this.isFetchingUser = false,
     super.message,
   });
 
@@ -35,6 +37,7 @@ final class SharedLoaded extends SharedState {
     String? selectedUser,
     List<UserEntity>? users,
     int? page,
+    bool? isFetchingUser,
     String? message,
   }) {
     return SharedLoaded(
@@ -44,13 +47,14 @@ final class SharedLoaded extends SharedState {
       selectedUser: selectedUser ?? this.selectedUser,
       users: users ?? this.users,
       page: page ?? this.page,
+      isFetchingUser: isFetchingUser ?? this.isFetchingUser,
       message: message ?? super.message,
     );
   }
 
   @override
   List<Object> get props =>
-      [name, textPalindrome, isPalindrome, selectedUser, users];
+      [name, textPalindrome, isPalindrome, selectedUser, users, isFetchingUser];
 }
 
 final class SharedLoading extends SharedState {}

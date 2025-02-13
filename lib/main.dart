@@ -1,28 +1,19 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:simple_list_test/common/constant/constant.dart';
-import 'package:simple_list_test/data/datasources/app_remote_datasource.dart';
-import 'package:simple_list_test/data/repositories/app_repository_impl.dart';
-import 'package:simple_list_test/domain/usecases/fetch_users_usecase.dart';
-import 'package:simple_list_test/presentation/bloc/shared_bloc.dart';
-import 'package:simple_list_test/presentation/screen/first_screen.dart';
-import 'package:simple_list_test/presentation/screen/second_screen.dart';
-import 'package:simple_list_test/presentation/screen/third_screen.dart';
 
 import 'common/route/route.dart';
-import 'domain/usecases/check_palindrome_usecase.dart';
+import 'di/injection.dart';
+import 'presentation/bloc/shared_bloc.dart';
+import 'presentation/screen/first_screen.dart';
+import 'presentation/screen/second_screen.dart';
+import 'presentation/screen/third_screen.dart';
 
-void main() {
-  final appRemote = AppRemoteDatasourceImpl(dio: Dio());
+void main() async {
+  await inject();
   runApp(
     BlocProvider(
-        create: (context) => SharedBloc(
-              checkPalindromeUseCase: CheckPalindromeUseCase(
-                  appRepository: AppRepositoryImpl(appRemote)),
-              fetchUsersUseCase: FetchUsersUseCase(
-                  appRepository: AppRepositoryImpl(appRemote)),
-            ),
+        create: (context) => getIt<SharedBloc>(),
         child: const MyApp()),
   );
 }
