@@ -1,4 +1,3 @@
-
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:simple_list_test/data/datasources/app_remote_datasource.dart';
@@ -14,13 +13,15 @@ Future<void> inject() async {
   getIt.registerLazySingleton<Dio>(() => Dio());
 
   getIt.registerLazySingleton<AppRemoteDatasource>(
-        () => AppRemoteDatasourceImpl(dio: getIt()),
+    () => AppRemoteDatasourceImpl(dio: getIt()),
   );
 
   getIt.registerLazySingleton<AppRepository>(() => AppRepositoryImpl(getIt()));
 
-  getIt.registerLazySingleton(() => CheckPalindromeUseCase(appRepository: getIt()));
+  getIt.registerLazySingleton(
+      () => CheckPalindromeUseCase(appRepository: getIt()));
   getIt.registerLazySingleton(() => FetchUsersUseCase(appRepository: getIt()));
 
-  getIt.registerLazySingleton(() => SharedBloc(checkPalindromeUseCase: getIt(), fetchUsersUseCase: getIt()));
+  getIt.registerLazySingleton(() =>
+      SharedBloc(checkPalindromeUseCase: getIt(), fetchUsersUseCase: getIt()));
 }

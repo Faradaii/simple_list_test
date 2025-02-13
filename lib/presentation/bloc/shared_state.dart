@@ -15,7 +15,7 @@ final class SharedLoaded extends SharedState {
   final String selectedUser;
   final List<UserEntity> users;
   final bool isLoading;
-  final int? page;
+  final int page;
 
   const SharedLoaded({
     this.name = "",
@@ -51,6 +51,14 @@ final class SharedLoaded extends SharedState {
   }
 
   @override
-  List<Object> get props =>
-      [name, textPalindrome, isPalindrome, selectedUser, users, isLoading, page ?? 1, message];
+  List<Object> get props => [
+        name,
+        textPalindrome,
+        isPalindrome,
+        selectedUser,
+        users,
+        isLoading,
+        page,
+        message
+      ];
 }

@@ -14,8 +14,7 @@ void main() async {
   await inject();
   runApp(
     BlocProvider(
-        create: (context) => getIt<SharedBloc>(),
-        child: const MyApp()),
+        create: (context) => getIt<SharedBloc>(), child: const MyApp()),
   );
 }
 

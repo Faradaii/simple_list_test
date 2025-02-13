@@ -146,8 +146,8 @@ class _FirstScreenState extends State<FirstScreen> {
           onPressed: () {
             if (_formName.currentState!.validate()) {
               context.read<SharedBloc>().add(
-                SharedNameChangedEvent(name: cteName!.text),
-              );
+                    SharedNameChangedEvent(name: cteName!.text),
+                  );
               Navigator.pushNamed(context, secondScreenRouteName);
             }
           },

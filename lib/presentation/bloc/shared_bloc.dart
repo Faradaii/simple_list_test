@@ -16,42 +16,40 @@ class SharedBloc extends Bloc<SharedEvent, SharedState> {
     required this.fetchUsersUseCase,
   }) : super(SharedLoaded()) {
     on<SharedNameChangedEvent>((event, emit) {
-
       emit((state as SharedLoaded).copyWith(isLoading: true));
-      emit((state as SharedLoaded).copyWith(name: event.name, isLoading: false));
+      emit(
+          (state as SharedLoaded).copyWith(name: event.name, isLoading: false));
     });
     on<SharedPalindromeChangedEvent>((event, emit) {
-
       emit((state as SharedLoaded).copyWith(isLoading: true));
       final isPalindrome = checkPalindromeUseCase.execute(event.textPalindrome);
       emit((state as SharedLoaded).copyWith(
-          textPalindrome: event.textPalindrome, isPalindrome: isPalindrome, isLoading: false));
+          textPalindrome: event.textPalindrome,
+          isPalindrome: isPalindrome,
+          isLoading: false));
     });
     on<SharedSelectedUserChangedEvent>((event, emit) {
-
       emit((state as SharedLoaded).copyWith(isLoading: true));
-      emit((state as SharedLoaded).copyWith(selectedUser: event.user, isLoading: false));
+      emit((state as SharedLoaded)
+          .copyWith(selectedUser: event.user, isLoading: false));
     });
     on<SharedLoadUsersEvent>((event, emit) async {
-
-
-
+      final prevState = state as SharedLoaded;
       final resetPage = 1;
 
       final result = await fetchUsersUseCase.execute(
-          event.forceRefresh ? resetPage : event.page, event.perPage);
-        print("After result : ${result.toString()}");
+          event.forceRefresh ? resetPage : prevState.page, event.perPage);
+      print("After result : ${result.toString()}");
 
       result.fold(
-          (fail) => emit((state as SharedLoaded).copyWith(message: fail.message, isLoading: false)), (success) {
-
-        final nextPage = success.data!.length < event.perPage
-            ? null
-            : (event.page ?? 1) + 1;
+          (fail) => emit((state as SharedLoaded)
+              .copyWith(message: fail.message, isLoading: false)), (success) {
+        final nextPage =
+            success.data!.length < event.perPage ? null : prevState.page + 1;
 
         emit(
           (state as SharedLoaded).copyWith(
-            users: success.data,
+            users: [...prevState.users, ...?success.data],
             page: nextPage,
             message: "",
             isLoading: false,
