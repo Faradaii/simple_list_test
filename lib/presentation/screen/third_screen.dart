@@ -13,6 +13,7 @@ class ThirdScreen extends StatefulWidget {
 
 class _ThirdScreenState extends State<ThirdScreen> {
   final ScrollController scrollController = ScrollController();
+  int? page;
 
   @override
   void initState() {
@@ -20,15 +21,10 @@ class _ThirdScreenState extends State<ThirdScreen> {
     scrollController.addListener(() {
       if (scrollController.position.pixels >=
           scrollController.position.maxScrollExtent) {
-        final currentState = context
-            .read<SharedBloc>()
-            .state;
-        if (currentState is SharedLoaded && currentState.page != null) {
-          _loadUsers();
-        }
+        _loadUsers();
       }
     });
-    _loadUsers();
+    page = 1;
   }
 
   @override
@@ -38,35 +34,43 @@ class _ThirdScreenState extends State<ThirdScreen> {
   }
 
   void _loadUsers({bool forceRefresh = false}) {
-    try {
+    if (page != 0) {
       context
           .read<SharedBloc>()
           .add(SharedLoadUsersEvent(forceRefresh: forceRefresh));
-    } catch (e) {
-      debugPrint("Error loading users: $e");
+      }
     }
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MyAppBar(title: "Third Screen"),
+      appBar: MyAppBar(
+        title: "Third Screen",
+        onPressed: () {
+          Navigator.pop(context);
+        },
+      ),
       body: SafeArea(
-        child: BlocBuilder<SharedBloc, SharedState>(
+        child: BlocConsumer<SharedBloc, SharedState>(
+          listener: (context, state){
+            if (state is SharedLoaded) {
+              setState(() {
+                page = state.page;
+              });
+            }
+          },
           builder: (context, state) {
-              return RefreshIndicator(
+            return RefreshIndicator(
                 onRefresh: () async {
                   _loadUsers(forceRefresh: true);
                 },
-                child: (state is SharedLoaded) ?
-                ((state.message != "") ?
-                    Center(child: Text(state.message))
-                    : (!state.isFetchingUser) ?
-                      _buildListUser(context, state.users)
-                      :
-                        Center(child: CircularProgressIndicator())) : Center(child: CircularProgressIndicator())
-              );
-              return Center(child: CircularProgressIndicator());
+                child: (state is SharedLoaded)
+                    ? ((state.message != "")
+                        ? Center(child: Text(state.message, style: TextStyle(color: Colors.black)))
+                        : (!state.isLoading)
+                            ? _buildListUser(context, state.users)
+                            : Center(child: CircularProgressIndicator(color: Colors.black,)))
+                    : Center(child: CircularProgressIndicator(color: Colors.black)));
           },
         ),
       ),
@@ -81,30 +85,27 @@ class _ThirdScreenState extends State<ThirdScreen> {
       itemBuilder: (context, index) {
         if (listUser.isEmpty) {
           return Center(
-              child:
-              Text("Empty", style: TextStyle(color: Colors.black)));
+              child: Text("Empty", style: TextStyle(color: Colors.black)));
         }
 
         final UserEntity user = listUser[index];
         return InkWell(
           onTap: () {
-            context.read<SharedBloc>().add(
-                SharedSelectedUserChangedEvent(
-                    user: "${user.firstName} ${user.lastName}"));
-                Navigator.pop(context);
+            context.read<SharedBloc>().add(SharedSelectedUserChangedEvent(
+                user: "${user.firstName} ${user.lastName}"));
+            Navigator.pop(context);
           },
           child: Padding(
-            padding: const EdgeInsets.symmetric(
-                horizontal: 24, vertical: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
             child: Column(
               children: [
                 Row(children: [
                   ClipOval(
                       child: Image.network(
-                        user.avatar,
-                        width: 60,
-                        height: 60,
-                      )),
+                    user.avatar,
+                    width: 60,
+                    height: 60,
+                  )),
                   SizedBox(
                     width: 16,
                   ),
@@ -115,15 +116,11 @@ class _ThirdScreenState extends State<ThirdScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(user.firstName + user.lastName,
-                          style: Theme
-                              .of(context)
-                              .textTheme
-                              .headlineMedium),
+                          style: Theme.of(context).textTheme.headlineMedium),
                       SizedBox(
                         height: 4,
                       ),
-                      Text(user.email,
-                          style: TextStyle(color: Colors.black)),
+                      Text(user.email, style: TextStyle(color: Colors.black)),
                     ],
                   ),
                   SizedBox(

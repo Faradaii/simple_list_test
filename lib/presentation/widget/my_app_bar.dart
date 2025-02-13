@@ -4,14 +4,15 @@ import '../../common/constant/constant.dart';
 
 class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
-  const MyAppBar({super.key, required this.title});
+  final VoidCallback? onPressed;
+  const MyAppBar({super.key, required this.title, required this.onPressed});
 
   @override
   PreferredSizeWidget build(BuildContext context) {
     return AppBar(
       backgroundColor: Theme.of(context).colorScheme.onSurface,
       leading: IconButton(
-        onPressed: () => {Navigator.pop(context)},
+        onPressed: onPressed,
         icon: Icon(
           Icons.arrow_back_ios_new_rounded,
           color: kPurple,

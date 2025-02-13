@@ -14,39 +14,44 @@ class SharedBloc extends Bloc<SharedEvent, SharedState> {
   SharedBloc({
     required this.checkPalindromeUseCase,
     required this.fetchUsersUseCase,
-  }) : super(SharedInitial()) {
+  }) : super(SharedLoaded()) {
     on<SharedNameChangedEvent>((event, emit) {
-      emit(SharedLoaded().copyWith(name: event.name));
+      emit((state as SharedLoaded).copyWith(isLoading: true));
+      emit(
+          (state as SharedLoaded).copyWith(name: event.name, isLoading: false));
     });
     on<SharedPalindromeChangedEvent>((event, emit) {
+      emit((state as SharedLoaded).copyWith(isLoading: true));
       final isPalindrome = checkPalindromeUseCase.execute(event.textPalindrome);
-      emit(SharedLoaded().copyWith(
-          textPalindrome: event.textPalindrome, isPalindrome: isPalindrome));
+      emit((state as SharedLoaded).copyWith(
+          textPalindrome: event.textPalindrome,
+          isPalindrome: isPalindrome,
+          isLoading: false));
     });
     on<SharedSelectedUserChangedEvent>((event, emit) {
-      emit(SharedLoaded().copyWith(selectedUser: event.user));
+      emit((state as SharedLoaded).copyWith(isLoading: true));
+      emit((state as SharedLoaded)
+          .copyWith(selectedUser: event.user, isLoading: false));
     });
     on<SharedLoadUsersEvent>((event, emit) async {
+      final prevState = state as SharedLoaded;
 
-      emit(SharedLoaded().copyWith(isFetchingUser: true));
+      emit(SharedLoading());
       final resetPage = 1;
 
       final result = await fetchUsersUseCase.execute(
-          event.forceRefresh ? resetPage : event.page, event.perPage);
+          event.forceRefresh ? resetPage : prevState.page, event.perPage);
 
       result.fold(
-          (fail) => emit(SharedLoaded().copyWith(message: fail.message, isFetchingUser: false)), (success) {
-
-        final nextPage = success.data!.length < event.perPage
-            ? null
-            : (event.page ?? 1) + 1;
+          (fail) => emit((prevState)
+              .copyWith(message: fail.message, isLoading: false)), (success) {
 
         emit(
-          SharedLoaded().copyWith(
-            users: success.data,
-            page: nextPage,
+          (prevState).copyWith(
+            users: event.forceRefresh ? success.data : [...prevState.users, ...?success.data],
+            page: success.data!.length < event.perPage ? 0 : prevState.page ?? 1 + 1,
             message: "",
-            isFetchingUser: false,
+            isLoading: false,
           ),
         );
       });

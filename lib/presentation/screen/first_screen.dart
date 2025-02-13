@@ -34,6 +34,13 @@ class _FirstScreenState extends State<FirstScreen> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    cteTextPalindrome?.dispose();
+    cteName?.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
@@ -134,22 +141,16 @@ class _FirstScreenState extends State<FirstScreen> {
         SizedBox(
           height: 10,
         ),
-        BlocListener<SharedBloc, SharedState>(
-          listener: (context, state) {
-            if (state is SharedLoaded && state.name.isNotEmpty) {
+        MyButton(
+          text: "NEXT",
+          onPressed: () {
+            if (_formName.currentState!.validate()) {
+              context.read<SharedBloc>().add(
+                    SharedNameChangedEvent(name: cteName!.text),
+                  );
               Navigator.pushNamed(context, secondScreenRouteName);
             }
           },
-          child: MyButton(
-            text: "NEXT",
-            onPressed: () {
-              if (_formName.currentState!.validate()) {
-                context.read<SharedBloc>().add(
-                      SharedNameChangedEvent(name: cteName!.text),
-                    );
-              }
-            },
-          ),
         ),
       ],
     );

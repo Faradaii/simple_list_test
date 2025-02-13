@@ -8,15 +8,13 @@ sealed class SharedState extends Equatable {
   List<Object> get props => [message];
 }
 
-final class SharedInitial extends SharedState {}
-
 final class SharedLoaded extends SharedState {
   final String name;
   final String textPalindrome;
   final bool isPalindrome;
   final String selectedUser;
   final List<UserEntity> users;
-  final bool isFetchingUser;
+  final bool isLoading;
   final int? page;
 
   const SharedLoaded({
@@ -25,8 +23,8 @@ final class SharedLoaded extends SharedState {
     this.isPalindrome = false,
     this.selectedUser = "",
     this.users = const [],
-    this.page = 1,
-    this.isFetchingUser = false,
+    this.page,
+    this.isLoading = false,
     super.message,
   });
 
@@ -37,7 +35,7 @@ final class SharedLoaded extends SharedState {
     String? selectedUser,
     List<UserEntity>? users,
     int? page,
-    bool? isFetchingUser,
+    bool? isLoading,
     String? message,
   }) {
     return SharedLoaded(
@@ -47,14 +45,21 @@ final class SharedLoaded extends SharedState {
       selectedUser: selectedUser ?? this.selectedUser,
       users: users ?? this.users,
       page: page ?? this.page,
-      isFetchingUser: isFetchingUser ?? this.isFetchingUser,
+      isLoading: isLoading ?? this.isLoading,
       message: message ?? super.message,
     );
   }
 
   @override
-  List<Object> get props =>
-      [name, textPalindrome, isPalindrome, selectedUser, users, isFetchingUser];
+  List<Object> get props => [
+        name,
+        textPalindrome,
+        isPalindrome,
+        selectedUser,
+        users,
+        isLoading,
+        message
+      ];
 }
 
-final class SharedLoading extends SharedState {}
+class SharedLoading extends SharedState {}
